@@ -12,8 +12,8 @@ all the Fabric binaries and docker images needed for this workshop.
 ```
 ./scripts/bootstrap.sh
 ```
-** NOTE** For Windows users, follow the directions on the [Fabric Documentation](https://hyperledger-fabric.readthedocs.io/en/release-1.4/install.html)
+**NOTE** For Windows users, follow the directions on the [Fabric Documentation](https://hyperledger-fabric.readthedocs.io/en/release-1.4/install.html)
 to download the binaries and images associated with Fabric v1.4.1.
 
-** NOTE ** Windows users are welcome to try the workshop, however it is aimed
+**NOTE** Windows users are welcome to try the workshop, however it is aimed
 towards those using unix environments and may not always work in Windows environments.
