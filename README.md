@@ -22,7 +22,7 @@ towards those using unix environments and may not always work in Windows environ
 1. To generate certs we are going to use some of the development binaries that
 you downloaded as part of the prerequisites.
 ```
-./scripts/generate.sh
+./generate.sh
 ```
 You should see two folders, `crypto-config` and `config`.
 
