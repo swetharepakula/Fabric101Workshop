@@ -12,6 +12,12 @@ all the Fabric binaries and docker images needed for this workshop.
 ```
 ./scripts/bootstrap.sh
 ```
+- Download the Node modules needed.
+```
+cd fabcar
+npm install
+```
+
 **NOTE** For Windows users, follow the directions on the [Fabric Documentation](https://hyperledger-fabric.readthedocs.io/en/release-1.4/install.html)
 to download the binaries and images associated with Fabric v1.4.1.
 
@@ -44,36 +50,97 @@ docker exec -it cli bash
 2. Next install the chaincode. The chaincode has already been mounted into the
 peer container. You can see more details in [`docker-compose.yml`](./docker-compose.yml).
 ```
-peer chaincode install -n mycc -v 1.0 -p github.com/chaincode
+peer chaincode install -n fabcar -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode
 ```
 
-3. Instantiate the chaincode. This will run the `Init` command. At the end of this
+3. Instantiate the chaincode. At the end of this
 you should see a new container appear which is the chaincode container.
 ```
-peer chaincode instantiate -n mycc -v 1.0 -C mychannel -c '{"Args":[]}'
+peer chaincode instantiate -n fabcar -v 1.0 -C mychannel -c '{"Args":[]}'
 ```
 
 ## Interact with the Deployed Chaincode
 
-1. Add an entry to the ledger.
+### Using the Peer CLI
+Lets us the peer cli to initialize the chaincode
+
+1. Initialize the ledger.
 ```
-peer chaincode invoke -n mycc -C mychannel -c '{"Args":["put","myname","mypeer","myorg","myanswer"]}'
+peer chaincode invoke -n fabcar -C mychannel -c '{"function":"initLedger","Args":[]}'
 ```
 
-2. Get all the keys from the ledger
+2. Query for the data populated in the ledger.
 ```
-peer chaincode query -n mycc -C mychannel -c '{"Args":["getKeys"]}'
-```
-
-3. Query a particular key
-```
-peer chaincode query -n mycc -C mychannel -c '{"Args":["get","myname","mypeer","myorg"]}'
+peer chaincode query -n fabcar -C mychannel -c '{"function":"queryAllCars","Args":[]}'
 ```
 
-4. Update the value of a key
+3. Exit out of the container
 ```
-peer chaincode invoke -n mycc -C mychannel -c '{"Args":["put","myname","mypeer","myorg2","mydifferentanswer"]}'
+Ctrl+D
 ```
+
+### Using the Node SDK
+
+#### Setting up the credentials
+
+1. Navigate to the fabcar directory
+```
+cd fabcar
+```
+
+2. Enroll as the Admin user. You should see an entry for admin in `wallet/admin`
+```
+node enrollAdmin.js
+```
+
+3. Register a new user using the admin credential. You should see an entry for user1 in `wallet/user`
+```
+node registerUser.js
+```
+
+#### Interact with the deployed Chaincode
+
+1. Query All the Cars
+```
+node query.js
+```
+
+2. Edit `query.js` (line 44) to query for a particular key.
+```
+const result = await contract.evaluateTransaction('queryCar', 'CAR4');
+```
+
+3. Run the query script again. You should see only one result back.
+```
+node query.js
+```
+
+4. Add a car to the ledger by invoking the chaincode.
+```
+node invoke.js
+```
+
+5. Edit `query.js` (line 44) to query for the car associated with 'CAR12'
+```
+const result = await contract.evaluateTransaction('queryCar', 'CAR10');
+```
+
+6. Verify that the ledger has been updated by querying for `CAR10`
+```
+node query.js
+```
+
+7. Edit `invoke.js` (line 44) to be able to change the car owner of `CAR8` to yourself.
+```
+await contract.submitTransaction('changeCarOwner', 'CAR8', '<your-name>');
+```
+
+8. Run the `invoke.js` to change the owner of `CAR8` to yourself
+```
+node invoke.js
+```
+
+9. Edit `query.js` and run it to verify that the owner of `CAR8` is now yourself
 
 ## Teardown the network
 
