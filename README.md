@@ -1,10 +1,10 @@
 # Hyperledger Fabric 101 Workshop
 
 
-### Prerequisites
+## Prerequisites
 
 - [Docker](https://www.docker.com/get-started) version 17.06.2-ce or greater is required.
-- [Node](https://nodejs.org/en/download/releases/) 8.9.0 or 9.0
+- [Node](https://nodejs.org/en/download/releases/) versions 8-10
 - Git clone this repo
 ```
 git clone https://github.com/swetharepakula/Fabric101Workshop
@@ -26,6 +26,10 @@ to download the binaries and images associated with Fabric v1.4.1.
 
 **NOTE** Windows users are welcome to try the workshop, however it is aimed
 towards those using unix environments and may not always work in Windows environments.
+
+---
+
+# Workshop
 
 ## Start up the Network
 1. To generate certs we are going to use some of the development binaries that
