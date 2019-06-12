@@ -95,12 +95,12 @@ Ctrl+D
 cd fabcar
 ```
 
-2. Enroll as the Admin user. You should see an entry for admin in `wallet/admin`
+2. Enroll as the Admin user. You should now see files under the directory `wallet/admin`
 ```
 node enrollAdmin.js
 ```
 
-3. Register a new user using the admin credential. You should see an entry for user1 in `wallet/user`
+3. Register a new user using the admin credential. You should files for user1 in `wallet/user1`
 ```
 node registerUser.js
 ```
@@ -127,7 +127,7 @@ node query.js
 node invoke.js
 ```
 
-5. Edit `query.js` (line 44) to query for the car associated with 'CAR12'
+5. Edit `query.js` (line 44) to query for the car associated with 'CAR10'
 ```
 const result = await contract.evaluateTransaction('queryCar', 'CAR10');
 ```
@@ -151,7 +151,7 @@ node invoke.js
 
 ## Teardown the network
 
-1. Run the [teardown script](./teardown.sh) to clean up your environment **NOTE** This will try to
+1. Run the [teardown script](./teardown.sh) to clean up your environment. Run this in the root of this repo. **NOTE** This will try to
 remove all your containers and prune all excess volumes.
 ```
 ./teardown.sh
