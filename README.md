@@ -18,6 +18,7 @@ all the Fabric binaries and docker images needed for this workshop.
 - Download the Node modules needed.
 ```
 cd fabcar
+npm install fabric-ca-client
 npm install
 ```
 
