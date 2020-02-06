@@ -9,11 +9,11 @@
 ```
 git clone https://github.com/swetharepakula/Fabric101Workshop
 ```
-- Download [Fabric v1.4 Binaries and Docker Images](https://hyperledger-fabric.readthedocs.io/en/release-1.4/install.html)
+- Download [Fabric v2.0 Binaries and Docker Images](https://hyperledger-fabric.readthedocs.io/en/release-2.0/install.html)
 by running [scripts/bootstrap.sh](scripts/bootstrap.sh). The script will download
 all the Fabric binaries and docker images needed for this workshop.
 ```
-./scripts/bootstrap.sh
+./scripts/bootstrap.sh -s
 ```
 - Download the Node modules needed.
 ```
@@ -21,8 +21,8 @@ cd fabcar
 npm install
 ```
 
-**NOTE** For Windows users, follow the directions on the [Fabric Documentation](https://hyperledger-fabric.readthedocs.io/en/release-1.4/install.html)
-to download the binaries and images associated with Fabric v1.4.1.
+**NOTE** For Windows users, follow the directions on the [Fabric Documentation](https://hyperledger-fabric.readthedocs.io/en/release-2.0/install.html)
+to download the binaries and images associated with Fabric v2.0.0.
 
 **NOTE** Windows users are welcome to try the workshop, however it is aimed
 towards those using unix environments and may not always work in Windows environments.
@@ -45,6 +45,7 @@ to that channel. For more details take a look at [`start.sh`](./start.sh)
 ```
 ./start.sh
 ```
+Ensure you have 5 containers running. A peer, an orderer, a ca, couchdb, and cli.
 
 ## Install the Chaincode
 
@@ -54,16 +55,50 @@ and certificates needed to talk to the peer and orderer node.
 docker exec -it cli bash
 ```
 
-2. Next install the chaincode. The chaincode has already been mounted into the
+2. Package the chaincode. The chaincode has already been mounted into the
 peer container. You can see more details in [`docker-compose.yml`](./docker-compose.yml).
 ```
-peer chaincode install -n fabcar -v 1.0 -l node -p /opt/gopath/src/github.com/chaincode
+peer lifecycle chaincode package fabcar.tar.gz --path /opt/gopath/src/github.com/chaincode/ --lang node --label fabcar1
 ```
 
-3. Instantiate the chaincode. At the end of this
-you should see a new container appear which is the chaincode container.
+3. Install the chaincode using the package.
 ```
-peer chaincode instantiate -n fabcar -v 1.0 -C mychannel -c '{"Args":[]}'
+peer lifecycle chaincode install fabcar.tar.gz
+```
+You should see a nodeenv container run to completion.
+
+4. Query the peer for the installed chain code to get the Package ID.
+```
+$ peer lifecycle chaincode queryinstalled
+Installed chaincodes on peer:
+Package ID: fabcar1:cb90821c789b3584ed7c388269a85e51997ac3042908ba380aabbc265f52af05, Label: fabcar1
+```
+
+5. Approve the chaincode for running.
+```
+peer lifecycle chaincode approveformyorg --channelID mychannel --name fabcar --version 1 --sequence 1 --package-id fabcar1:433b167e5a9d9b3dd089ca4e4a9f757f0f2effbc1255e9a7b3a2313860a797ff
+```
+
+6. Check the whether it's approved by all organizations.
+```
+$ peer lifecycle chaincode checkcommitreadiness -C mychannel -n fabcar -v 1
+Chaincode definition for chaincode 'fabcar', version '1', sequence '1' on channel 'mychannel' approval status by org:
+Org1MSP: true
+```
+
+7. Commit the chaincode.
+```
+$ peer lifecycle chaincode commit -C mychannel -n fabcar -v 1 --sequence 1
+2020-02-07 00:12:45.478 UTC [cli.lifecycle.chaincode] setOrdererClient -> INFO 001 Retrieved channel (mychannel) orderer endpoint: orderer.example.com:7050
+2020-02-07 00:12:47.623 UTC [chaincodeCmd] ClientWait -> INFO 002 txid [7eea31d96ebf6949130045a83cd948bc7dd43226f0ece18c6dc787e02d97eeba] committed with status (VALID) at
+```
+You should see a fabcar container running.
+
+8. Ensure chaincode has been committed.
+```
+$ peer lifecycle chaincode querycommitted -C mychannel
+Committed chaincode definitions on channel 'mychannel':
+Name: fabcar, Version: 1, Sequence: 1, Endorsement Plugin: escc, Validation Plugin: vscc
 ```
 
 ## Interact with the Deployed Chaincode
