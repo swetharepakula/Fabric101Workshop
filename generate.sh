@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-export PATH=${PWD}/bin:${PWD}:$PATH
+export PATH=${PWD}/bin:$PATH
 export FABRIC_CFG_PATH=${PWD}
 CHANNEL_NAME=mychannel
 
@@ -19,10 +19,11 @@ if [ "$?" -ne 0 ]; then
   exit 1
 fi
 
+# move private key to more convenient and consistent name
 mv crypto-config/peerOrganizations/org1.example.com/ca/*_sk crypto-config/peerOrganizations/org1.example.com/ca/ca.org1.example.com_sk
 
 # generate genesis block for orderer
-configtxgen -profile OneOrgOrdererGenesis -outputBlock ./config/genesis.block
+configtxgen -profile OneOrgOrdererGenesis -channelID ordererchannel -outputBlock ./config/genesis.block
 if [ "$?" -ne 0 ]; then
   echo "Failed to generate orderer genesis block..."
   exit 1
