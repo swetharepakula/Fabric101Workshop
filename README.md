@@ -58,12 +58,17 @@ docker exec -it cli bash
 2. Package the chaincode. The chaincode has already been mounted into the
 peer container. You can see more details in [`docker-compose.yml`](./docker-compose.yml).
 ```
-peer lifecycle chaincode package fabcar.tar.gz --path /opt/gopath/src/github.com/chaincode/ --lang node --label fabcar1
+peer lifecycle chaincode package fabcar-js.tar.gz --path /opt/gopath/src/github.com/chaincode/javascript --lang node --label fabcar1
 ```
+OR
+```
+peer lifecycle chaincode package fabcar-go.tar.gz --path /opt/gopath/src/github.com/chaincode/go --lang golang --label fabcar1
+```
+
 
 3. Install the chaincode using the package.
 ```
-peer lifecycle chaincode install fabcar.tar.gz
+peer lifecycle chaincode install fabcar-go.tar.gz
 ```
 You should see a nodeenv container run to completion.
 
