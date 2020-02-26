@@ -34,10 +34,10 @@ type SmartContract struct {
 
 // Car describes basic details of what makes up a car
 type Car struct {
-	Make   string `json:"make"`
-	Model  string `json:"model"`
-	Colour string `json:"colour"`
-	Owner  string `json:"owner"`
+	Color string `json:"color"`
+	Make  string `json:"make"`
+	Model string `json:"model"`
+	Owner string `json:"owner"`
 }
 
 // QueryResult structure used for handling result of query
@@ -48,17 +48,18 @@ type QueryResult struct {
 
 // InitLedger adds a base set of cars to the ledger
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
+	fmt.Println("============= START : Initialize Ledger ===========")
 	cars := []Car{
-		Car{Make: "Toyota", Model: "Prius", Colour: "blue", Owner: "Tomoko"},
-		Car{Make: "Ford", Model: "Mustang", Colour: "red", Owner: "Brad"},
-		Car{Make: "Hyundai", Model: "Tucson", Colour: "green", Owner: "Jin Soo"},
-		Car{Make: "Volkswagen", Model: "Passat", Colour: "yellow", Owner: "Max"},
-		Car{Make: "Tesla", Model: "S", Colour: "black", Owner: "Adriana"},
-		Car{Make: "Peugeot", Model: "205", Colour: "purple", Owner: "Michel"},
-		Car{Make: "Chery", Model: "S22L", Colour: "white", Owner: "Aarav"},
-		Car{Make: "Fiat", Model: "Punto", Colour: "violet", Owner: "Pari"},
-		Car{Make: "Tata", Model: "Nano", Colour: "indigo", Owner: "Valeria"},
-		Car{Make: "Holden", Model: "Barina", Colour: "brown", Owner: "Shotaro"},
+		Car{Make: "Toyota", Model: "Prius", Color: "blue", Owner: "Tomoko"},
+		Car{Make: "Ford", Model: "Mustang", Color: "red", Owner: "Brad"},
+		Car{Make: "Hyundai", Model: "Tucson", Color: "green", Owner: "Jin Soo"},
+		Car{Make: "Volkswagen", Model: "Passat", Color: "yellow", Owner: "Max"},
+		Car{Make: "Tesla", Model: "S", Color: "black", Owner: "Adriana"},
+		Car{Make: "Peugeot", Model: "205", Color: "purple", Owner: "Michel"},
+		Car{Make: "Chery", Model: "S22L", Color: "white", Owner: "Aarav"},
+		Car{Make: "Fiat", Model: "Punto", Color: "violet", Owner: "Pari"},
+		Car{Make: "Tata", Model: "Nano", Color: "indigo", Owner: "Valeria"},
+		Car{Make: "Holden", Model: "Barina", Color: "brown", Owner: "Shotaro"},
 	}
 
 	for i, car := range cars {
@@ -70,16 +71,17 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 		}
 	}
 
+	fmt.Println("============= END : Initialize Ledger ===========")
 	return nil
 }
 
 // CreateCar adds a new car to the world state with given details
-func (s *SmartContract) CreateCar(ctx contractapi.TransactionContextInterface, carNumber string, make string, model string, colour string, owner string) error {
+func (s *SmartContract) CreateCar(ctx contractapi.TransactionContextInterface, carNumber string, make string, model string, color string, owner string) error {
 	car := Car{
-		Make:   make,
-		Model:  model,
-		Colour: colour,
-		Owner:  owner,
+		Make:  make,
+		Model: model,
+		Color: color,
+		Owner: owner,
 	}
 
 	carAsBytes, _ := json.Marshal(car)
@@ -89,6 +91,7 @@ func (s *SmartContract) CreateCar(ctx contractapi.TransactionContextInterface, c
 
 // QueryCar returns the car stored in the world state with given id
 func (s *SmartContract) QueryCar(ctx contractapi.TransactionContextInterface, carNumber string) (*Car, error) {
+	fmt.Println("============= START : Query CAR ===========")
 	carAsBytes, err := ctx.GetStub().GetState(carNumber)
 
 	if err != nil {
@@ -107,6 +110,7 @@ func (s *SmartContract) QueryCar(ctx contractapi.TransactionContextInterface, ca
 
 // QueryAllCars returns all cars found in world state
 func (s *SmartContract) QueryAllCars(ctx contractapi.TransactionContextInterface) ([]QueryResult, error) {
+	fmt.Println("============= START : Query ALL CAR ===========")
 	startKey := "CAR0"
 	endKey := "CAR99"
 

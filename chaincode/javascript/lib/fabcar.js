@@ -8,7 +8,7 @@ const { Contract } = require('fabric-contract-api');
 
 class FabCar extends Contract {
 
-    async initLedger(ctx) {
+    async InitLedger(ctx) {
         console.info('============= START : Initialize Ledger ===========');
         const cars = [
             {
@@ -74,14 +74,13 @@ class FabCar extends Contract {
         ];
 
         for (let i = 0; i < cars.length; i++) {
-            cars[i].docType = 'car';
             await ctx.stub.putState('CAR' + i, Buffer.from(JSON.stringify(cars[i])));
             console.info('Added <--> ', cars[i]);
         }
         console.info('============= END : Initialize Ledger ===========');
     }
 
-    async queryCar(ctx, carNumber) {
+    async QueryCar(ctx, carNumber) {
         const carAsBytes = await ctx.stub.getState(carNumber); // get the car from chaincode state
         if (!carAsBytes || carAsBytes.length === 0) {
             throw new Error(`${carNumber} does not exist`);
@@ -90,12 +89,11 @@ class FabCar extends Contract {
         return carAsBytes.toString();
     }
 
-    async createCar(ctx, carNumber, make, model, color, owner) {
+    async CreateCar(ctx, carNumber, make, model, color, owner) {
         console.info('============= START : Create Car ===========');
 
         const car = {
             color,
-            docType: 'car',
             make,
             model,
             owner,
@@ -105,7 +103,7 @@ class FabCar extends Contract {
         console.info('============= END : Create Car ===========');
     }
 
-    async queryAllCars(ctx) {
+    async QueryAllCars(ctx) {
         const startKey = 'CAR0';
         const endKey = 'CAR999';
         const allResults = [];
@@ -124,7 +122,7 @@ class FabCar extends Contract {
         return JSON.stringify(allResults);
     }
 
-    async changeCarOwner(ctx, carNumber, newOwner) {
+    async ChangeCarOwner(ctx, carNumber, newOwner) {
         console.info('============= START : changeCarOwner ===========');
 
         const carAsBytes = await ctx.stub.getState(carNumber); // get the car from chaincode state
