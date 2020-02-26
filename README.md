@@ -45,30 +45,25 @@ to that channel. For more details take a look at [`start.sh`](./start.sh)
 ```
 ./start.sh
 ```
-Ensure you have 5 containers running. A peer, an orderer, a ca, couchdb, and cli.
+Ensure you have 6 containers running. Two peers, an orderer, a ca, and two cli.
 
 ## Install the Chaincode
 
-1. Exec into the cli container. The cli container is configured with all the tools
-and certificates needed to talk to the peer and orderer node.
+1. Exec into the Org1 cli container. The cli container is configured with all the tools
+and certificates needed to talk to the peers and orderer node.
 ```
-docker exec -it cli bash
+docker exec -it org1-cli bash
 ```
 
-2. Package the chaincode. The chaincode has already been mounted into the
+2. Package the node chaincode. The chaincode has already been mounted into the
 peer container. You can see more details in [`docker-compose.yml`](./docker-compose.yml).
 ```
 peer lifecycle chaincode package fabcar-js.tar.gz --path /opt/gopath/src/github.com/chaincode/javascript --lang node --label fabcar1
 ```
-OR
-```
-peer lifecycle chaincode package fabcar-go.tar.gz --path /opt/gopath/src/github.com/chaincode/go --lang golang --label fabcar1
-```
-
 
 3. Install the chaincode using the package.
 ```
-peer lifecycle chaincode install fabcar-go.tar.gz
+peer lifecycle chaincode install fabcar-js.tar.gz
 ```
 You should see a nodeenv container run to completion.
 
@@ -76,30 +71,75 @@ You should see a nodeenv container run to completion.
 ```
 $ peer lifecycle chaincode queryinstalled
 Installed chaincodes on peer:
-Package ID: fabcar1:cb90821c789b3584ed7c388269a85e51997ac3042908ba380aabbc265f52af05, Label: fabcar1
+Package ID: fabcar1:<uuid>, Label: fabcar1
 ```
 
-5. Approve the chaincode for running.
+5. In another terminal, exec into the Org2 cli container. The cli container is
+configured with all the tools and certificates needed to talk to the peers and
+orderer node.
 ```
-peer lifecycle chaincode approveformyorg --channelID mychannel --name fabcar --version 1 --sequence 1 --package-id fabcar1:433b167e5a9d9b3dd089ca4e4a9f757f0f2effbc1255e9a7b3a2313860a797ff
+docker exec -it org2-cli bash
 ```
 
-6. Check the whether it's approved by all organizations.
+6. Package the go chaincode. The chaincode has already been mounted into the
+peer container. You can see more details in [`docker-compose.yml`](./docker-compose.yml).
+```
+peer lifecycle chaincode package fabcar-go.tar.gz --path /opt/gopath/src/github.com/chaincode/go --lang golang --label fabcar1
+```
+
+7. Install the chaincode using the package.
+```
+peer lifecycle chaincode install fabcar-go.tar.gz
+```
+You should see a ccenv container run to completion.
+
+8. Query the peer for the installed chain code to get the Package ID.
+```
+$ peer lifecycle chaincode queryinstalled
+Installed chaincodes on peer:
+Package ID: fabcar1:<uuid>, Label: fabcar1
+```
+The package id is different from the node version of the chaincode
+package, but the label is the same.
+
+9. Approve the chaincode for running. Remember to update the package-id to
+corresponding id from your installation.
+```
+peer lifecycle chaincode approveformyorg --channelID mychannel --name fabcar --version 1 --sequence 1 --tls --cafile $ORDERER_CA --package-id <org2-installation-package-id>
+```
+
+10. Check the whether it's approved by Org2.
+```
+$ peer lifecycle chaincode checkcommitreadiness -C mychannel -n fabcar -v 1
+Chaincode definition for chaincode 'fabcar', version '1', sequence '1' on channel 'mychannel' approval status by org:
+Org1MSP: false
+Org2MSP: true
+```
+
+11. Switch back to the terminal with the Org1 CLI container, and approve the
+chaincode for running.
+```
+peer lifecycle chaincode approveformyorg --channelID mychannel --name fabcar --version 1 --sequence 1 --tls --cafile $ORDERER_CA --package-id <org1-installation-package-id>
+```
+
+12. Check that the chaincode definition has been approved by all organizations.
 ```
 $ peer lifecycle chaincode checkcommitreadiness -C mychannel -n fabcar -v 1
 Chaincode definition for chaincode 'fabcar', version '1', sequence '1' on channel 'mychannel' approval status by org:
 Org1MSP: true
+Org2MSP: true
 ```
 
-7. Commit the chaincode.
+13. Commit the chaincode.
 ```
-$ peer lifecycle chaincode commit -C mychannel -n fabcar -v 1 --sequence 1
-2020-02-07 00:12:45.478 UTC [cli.lifecycle.chaincode] setOrdererClient -> INFO 001 Retrieved channel (mychannel) orderer endpoint: orderer.example.com:7050
-2020-02-07 00:12:47.623 UTC [chaincodeCmd] ClientWait -> INFO 002 txid [7eea31d96ebf6949130045a83cd948bc7dd43226f0ece18c6dc787e02d97eeba] committed with status (VALID) at
+$ peer lifecycle chaincode commit -C mychannel -n fabcar -v 1 --sequence 1 --tls -o orderer.example.com:7050 --cafile $ORDERER_CA --peerAddresses peer0.org1.example.com:7051 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+2020-02-21 20:30:44.846 UTC [cli.lifecycle.chaincode] setOrdererClient -> INFO 001 Retrieved channel (mychannel) orderer endpoint: orderer.example.com:7050
+2020-02-21 20:30:47.041 UTC [chaincodeCmd] ClientWait -> INFO 002 txid [c8363b39fd60ce32992d131752480761fd1b8aa107ad8095c9db0f25394ac8cd] committed with status (VALID) at peer0.org1.example.com:7051
+2020-02-21 20:30:47.099 UTC [chaincodeCmd] ClientWait -> INFO 003 txid [c8363b39fd60ce32992d131752480761fd1b8aa107ad8095c9db0f25394ac8cd] committed with status (VALID) at peer0.org2.example.com:9051
 ```
-You should see a fabcar container running.
+You should see two fabcar container running.
 
-8. Ensure chaincode has been committed.
+14. Ensure chaincode has been committed.
 ```
 $ peer lifecycle chaincode querycommitted -C mychannel
 Committed chaincode definitions on channel 'mychannel':
@@ -109,19 +149,19 @@ Name: fabcar, Version: 1, Sequence: 1, Endorsement Plugin: escc, Validation Plug
 ## Interact with the Deployed Chaincode
 
 ### Using the Peer CLI
-Lets us the peer cli to initialize the chaincode
+Lets use the peer cli to initialize the chaincode
 
-1. Initialize the ledger.
+1. Initialize the ledger in either org's cli container.
 ```
-peer chaincode invoke -n fabcar -C mychannel -c '{"function":"initLedger","Args":[]}'
+peer chaincode invoke -n fabcar -C mychannel -c '{"function":"InitLedger","Args":[]}' -o orderer.example.com:7050 --tls --cafile $ORDERER_CA --peerAddresses peer0.org1.example.com:7051 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 ```
 
 2. Query for the data populated in the ledger.
 ```
-peer chaincode query -n fabcar -C mychannel -c '{"function":"queryAllCars","Args":[]}'
+peer chaincode query -n fabcar -C mychannel -c '{"function":"QueryAllCars","Args":[]}'
 ```
 
-3. Exit out of the container
+3. Exit out of the containers.
 ```
 Ctrl+D
 ```

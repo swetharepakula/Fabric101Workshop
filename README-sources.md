@@ -1,9 +1,10 @@
-files beyond the readme come from basic network fabric sample
+This repo takes many files from the basic network and first network examples
+in Fabric Samples. The scripts and configurations are modified versions of
+those two examples. This includes the scripts, the configuration files, the
+chaincodes and the connection profile template. Modifications have been done
+to make the base network with 2 orgs, 1 peer each, and a single orderer using
+raft. The chaincodes have been altered so they are compatible with each other.
 
-along with the config and crypto-config directories.
-
-fabric-samples/basic-network/
-
+Sources:
 https://github.com/hyperledger/fabric-samples/tree/master/basic-network
-
-
+https://github.com/hyperledger/fabric-samples/tree/master/first-network
