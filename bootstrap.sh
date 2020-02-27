@@ -13,6 +13,8 @@ CA_VERSION=1.4.4
 THIRDPARTY_IMAGE_VERSION=0.4.18
 ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m | sed 's/x86_64/amd64/g')")
 MARCH=$(uname -m)
+FABRIC_WORKSHOP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd ${FABRIC_WORKSHOP_DIR}
 
 printHelp() {
     echo "Usage: bootstrap.sh [version [ca_version [thirdparty_version]]] [options]"

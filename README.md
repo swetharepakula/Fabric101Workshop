@@ -13,7 +13,7 @@ git clone https://github.com/swetharepakula/Fabric101Workshop
 by running [scripts/bootstrap.sh](scripts/bootstrap.sh). The script will download
 all the Fabric binaries and docker images needed for this workshop.
 ```
-./scripts/bootstrap.sh -s
+./bootstrap.sh -s
 ```
 - Download the Node modules needed.
 ```
