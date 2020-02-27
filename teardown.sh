@@ -8,9 +8,10 @@
 set -e
 
 export COMPOSE_PROJECT_NAME=fabric101
+export FABRIC_CFG_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Shut down the Docker containers for the system tests.
-docker-compose -f docker-compose.yml kill && docker-compose -f docker-compose.yml down
+docker-compose -f ${FABRIC_CFG_PATH}/docker-compose.yml kill && docker-compose -f ${FABRIC_CFG_PATH}/docker-compose.yml down
 
 # remove the local state
 rm -f ~/.hfc-key-store/*

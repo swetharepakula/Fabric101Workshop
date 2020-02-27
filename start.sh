@@ -7,13 +7,15 @@
 # Exit on first error, print all commands.
 set -ev
 
+export FABRIC_CFG_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 # don't rewrite paths for Windows Git Bash users
 export MSYS_NO_PATHCONV=1
 export COMPOSE_PROJECT_NAME=fabric101
 
-docker-compose -f docker-compose.yml down
+docker-compose -f ${FABRIC_CFG_PATH}/docker-compose.yml down
 
-docker-compose -f docker-compose.yml up -d
+docker-compose -f ${FABRIC_CFG_PATH}/docker-compose.yml up -d
 docker ps -a
 
 # wait for Hyperledger Fabric to start

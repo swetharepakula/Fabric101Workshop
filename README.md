@@ -33,7 +33,8 @@ towards those using unix environments and may not always work in Windows environ
 
 ## Start up the Network
 1. To generate certs we are going to use some of the development binaries that
-you downloaded as part of the prerequisites.
+you downloaded as part of the prerequisites. This script will also create
+connection profiles that are necessary to use SDKs later in this workshop.
 ```
 ./generate.sh
 ```
@@ -175,59 +176,45 @@ Ctrl+D
 cd fabcar
 ```
 
-2. Enroll as the Admin user. You should now see files under the directory `wallet/admin`
+2. Enroll as the Admin user. You should now see files under the directory `wallet/org1/admin`
 ```
-node enrollAdmin.js
+node enrollAdmin.js org1
 ```
 
-3. Register a new user using the admin credential. You should files for user1 in `wallet/user1`
+3. Register a new user using the admin credential. You should files for your
+chosen username in `wallet/org1/<username>`.
 ```
-node registerUser.js
+node registerUser.js org1 <username>
 ```
 
 #### Interact with the deployed Chaincode
 
 1. Query All the Cars
 ```
-node query.js
+node query.js org1 <username> QueryAllCars
 ```
 
-2. Edit `query.js` (line 44) to query for a particular key.
+2. Query for a particular key. You should see only one result back.
 ```
-const result = await contract.evaluateTransaction('queryCar', 'CAR4');
-```
-
-3. Run the query script again. You should see only one result back.
-```
-node query.js
+node query.js org1 <username> QueryCar CAR4
 ```
 
-4. Add a car to the ledger by invoking the chaincode.
+3. Add a car to the ledger by invoking the chaincode.
 ```
-node invoke.js
-```
-
-5. Edit `query.js` (line 44) to query for the car associated with 'CAR10'
-```
-const result = await contract.evaluateTransaction('queryCar', 'CAR10');
+node invoke.js org1 <username> CreateCar CAR12 Honda Accord Black Tom
 ```
 
-6. Verify that the ledger has been updated by querying for `CAR10`
+4. Verify that the ledger has been updated by querying for `CAR12`
 ```
-node query.js
-```
-
-7. Edit `invoke.js` (line 44) to be able to change the car owner of `CAR8` to yourself.
-```
-await contract.submitTransaction('changeCarOwner', 'CAR8', '<your-name>');
+node query.js org1 <username> QueryCar CAR12
 ```
 
-8. Run the `invoke.js` to change the owner of `CAR8` to yourself
+5. Submit a transaction to change the car owner of `CAR8` to yourself.
 ```
-node invoke.js
+node invoke.js org1 <username> CreateCarOwner CAR8 Honda <your-name>
 ```
 
-9. Edit `query.js` and run it to verify that the owner of `CAR8` is now yourself
+9. Run `query.js` to verify that the owner of `CAR8` is now yourself
 
 ## Teardown the network
 

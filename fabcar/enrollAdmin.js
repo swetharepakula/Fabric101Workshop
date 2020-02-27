@@ -9,19 +9,21 @@ const { Wallets } = require('fabric-network');
 const fs = require('fs');
 const path = require('path');
 
-const ccpPath = path.resolve(__dirname, 'connection.json');
+//Get User Preferred Org
+const org = process.argv[2].toLowerCase()
+const connection_profile_name = 'connection-' + process.argv[2] + '.json'
+const ccpPath = path.resolve(__dirname, connection_profile_name);
 const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
 const ccp = JSON.parse(ccpJSON);
 
 async function main() {
     try {
-
         // Create a new CA client for interacting with the CA.
-        const caInfo = ccp.certificateAuthorities['ca.example.com'];
+        const caInfo = ccp.certificateAuthorities['ca.'+ org + '.example.com'];
         const ca = new FabricCAServices(caInfo.url, {  verify: false }, caInfo.caName);
 
         // Create a new file system based wallet for managing identities.
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(process.cwd(), 'wallet', org);
         const wallet = await Wallets.newFileSystemWallet(walletPath);
         console.log(`Wallet path: ${walletPath}`);
 
@@ -39,7 +41,7 @@ async function main() {
                 certificate: enrollment.certificate,
                 privateKey: enrollment.key.toBytes(),
             },
-            mspId: 'Org1MSP',
+            mspId: org.charAt(0).toUpperCase() + org.substring(1)+ "MSP",
             type: 'X.509',
         };
         await wallet.put('admin', x509Identity);
