@@ -211,7 +211,7 @@ node query.js org1 <username> QueryCar CAR12
 
 5. Submit a transaction to change the car owner of `CAR8` to yourself.
 ```
-node invoke.js org1 <username> CreateCarOwner CAR8 Honda <your-name>
+node invoke.js org1 <username> ChangeCarOwner CAR8 <your-name>
 ```
 
 9. Run `query.js` to verify that the owner of `CAR8` is now yourself
