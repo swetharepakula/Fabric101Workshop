@@ -133,7 +133,7 @@ Org2MSP: true
 
 13. Commit the chaincode.
 ```
-$ peer lifecycle chaincode commit -C mychannel -n fabcar -v 1 --sequence 1 --tls -o orderer.example.com:7050 --cafile $ORDERER_CA --peerAddresses peer0.org1.example.com:7051 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+$ peer lifecycle chaincode commit -C mychannel -n fabcar -v 1 --sequence 1 --tls -o orderer.example.com:7050 --cafile $ORDERER_CA --peerAddresses peer0.org1.example.com:7051 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles $CORE_PEER_TLS_ROOTCERT_FILE --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 2020-02-21 20:30:44.846 UTC [cli.lifecycle.chaincode] setOrdererClient -> INFO 001 Retrieved channel (mychannel) orderer endpoint: orderer.example.com:7050
 2020-02-21 20:30:47.041 UTC [chaincodeCmd] ClientWait -> INFO 002 txid [c8363b39fd60ce32992d131752480761fd1b8aa107ad8095c9db0f25394ac8cd] committed with status (VALID) at peer0.org1.example.com:7051
 2020-02-21 20:30:47.099 UTC [chaincodeCmd] ClientWait -> INFO 003 txid [c8363b39fd60ce32992d131752480761fd1b8aa107ad8095c9db0f25394ac8cd] committed with status (VALID) at peer0.org2.example.com:9051
@@ -154,7 +154,7 @@ Lets use the peer cli to initialize the chaincode
 
 1. Initialize the ledger in either org's cli container.
 ```
-peer chaincode invoke -n fabcar -C mychannel -c '{"function":"InitLedger","Args":[]}' -o orderer.example.com:7050 --tls --cafile $ORDERER_CA --peerAddresses peer0.org1.example.com:7051 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+peer chaincode invoke -n fabcar -C mychannel -c '{"function":"InitLedger","Args":[]}' -o orderer.example.com:7050 --tls --cafile $ORDERER_CA --peerAddresses peer0.org1.example.com:7051 --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles $CORE_PEER_TLS_ROOTCERT_FILE --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
 ```
 
 2. Query for the data populated in the ledger.
