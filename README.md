@@ -10,7 +10,7 @@
 git clone https://github.com/swetharepakula/Fabric101Workshop
 ```
 - Download [Fabric v2.0 Binaries and Docker Images](https://hyperledger-fabric.readthedocs.io/en/release-2.0/install.html)
-by running [scripts/bootstrap.sh](scripts/bootstrap.sh). The script will download
+by running [bootstrap.sh](bootstrap.sh). The script will download
 all the Fabric binaries and docker images needed for this workshop.
 ```
 ./bootstrap.sh -s
