@@ -181,7 +181,7 @@ cd fabcar
 node enrollAdmin.js org1
 ```
 
-3. Register a new user using the admin credential. You should files for your
+3. Register a new user using the admin credential. You should see new files created for your
 chosen username in `wallet/org1/<username>`.
 ```
 node registerUser.js org1 <username>
