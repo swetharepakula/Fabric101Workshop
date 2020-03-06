@@ -19,5 +19,7 @@ rm -f ~/.hfc-key-store/*
 # remove chaincode docker images
 docker rm $(docker ps -aq)
 docker rmi $(docker images dev-* -q)
+docker rm fabcar-nodejs
+docker rmi fabcar-nodejs
 
 # Your system is now clean

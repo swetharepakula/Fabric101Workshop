@@ -226,3 +226,18 @@ services:
       - peer0.org2.example.com
     networks:
       - basic
+
+  fabcar-nodejs:
+    container_name: fabcar-nodejs
+    image: fabcar-nodejs
+    tty: true
+    stdin_open: true
+    command: /bin/bash
+    #volumes:
+    #  - ./fabcar/:/opt/fabcar
+    depends_on:
+      - orderer.example.com
+      - peer0.org1.example.com
+      - peer0.org2.example.com
+    networks:
+      - basic

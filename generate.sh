@@ -53,3 +53,5 @@ if [ "$?" -ne 0 ]; then
 fi
 
 ${FABRIC_CFG_PATH}/ccp-generate.sh
+
+docker build -t fabcar-nodejs -f fabcar/Dockerfile fabcar
